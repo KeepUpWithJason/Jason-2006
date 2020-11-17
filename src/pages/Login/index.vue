@@ -1,5 +1,6 @@
 <template>
   <div class="login">
+    <div class="left"></div>
     <div class="login_page">
       <el-form
         :model="loginForm"
@@ -9,6 +10,7 @@
         label-width="100px"
         class="demo-loginForm"
       >
+      <h1 class="title">千锋管理系统</h1>
         <el-form-item label="用户名" prop="username">
           <el-input
             type="text"
@@ -16,7 +18,7 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="password">
+        <el-form-item label="密码" prop="password">
           <el-input
             type="password"
             v-model="loginForm.password"
@@ -42,12 +44,24 @@
 </template>
 
 <script>
+
+//登录逻辑的实现
+
+//1.使用用户输入的username和password传递给后端
+
+//2.登录通过后，将后端返回的token存到本地
+
+//3.每次请求的时候，携带token
+
+//4.展示token校验真确的数据
+
+//5.校验不同过，跳转到登录页
+
+import { login } from "@/api"
 export default {
   data() {
     var validateUsername = (rule, value, callback) => {
-      console.log(rule);
-      console.log(value);
-      var uPattern = /^[a-zA-Z0-9_-]{4,16}$/;
+      var uPattern = /^[a-zA-Z0-9_-]{3,16}$/;
       if (!uPattern.test(value)) {
         callback("4到16位(字母、数字、下划线、减号)");
       } else {
@@ -56,7 +70,7 @@ export default {
     };
     var validatePassword = (rule, value, callback) => {
       if (!value) {
-        callback("请再次输入密码");
+        callback("请输入密码");
       } else {
         callback();
       }
@@ -78,6 +92,23 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           //本地校验通过
+          console.log(this.loginForm.username,this.loginForm.password);
+          let { username,password } = this.loginForm
+          login(username,password)
+          .then(res=>{
+            console.log(res);
+            if(res.data.state){
+              //用户名密码正确
+              localStorage.setItem("jason-token",res.data.token)
+              this.$router.push("/")
+            }else{
+              //用户名或者密码错误
+              alert("用户名或密码错误")
+            }
+          })
+          .catch(err=>{
+            console.log(err);
+          })
           alert("submit!");
         } else {
           console.log("error submit!!");
@@ -92,14 +123,59 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 /* 表单样式 */
 .el-form {
   width: 400px;
 }
 
-/* 登录页面背景 */
-.login .bg_video {
+.login {
+  height: 100%;
+  width: 100%;
+  background: url("../../assets/imgs/bg.jpg");
+  overflow: hidden;
+}
+
+.left {
+  width: 50%;
+  height: 100%;
+  background-image: url("../../assets/imgs/bg2.png");
+  background-repeat: no-repeat;
+  background-size: 50%;
+  position: absolute;
+  opacity: 0.7;
+  background-position: 60% 65%;
+}
+
+.login_page {
+  position: relative;
+  z-index: 9;
+  width: 25rem;
+  height: 30.47619048rem;
+  position: absolute;
+  top: 50%;
+  left: 75%;
+  /* -webkit-transform: translate(-50%, -50%); */
+  transform: translate(-50%, -50%);
+  border-radius: 11px;
+  background: rgba(83, 107, 182, 0.46);
+  background: rgba(0, 0, 0, 0.2);
+  .title {
+    color: #fff;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    text-align: center;
+  }
+
+  .el-button.el-button--primary {
+    width: 100%;
+    background: linear-gradient(90deg, #1596fb, #002dff);
+    position: absolute;
+    right: 45px;
+    top: 40px;
+
+  }
+  .bg_video {
     display: block;
     margin: auto;
     min-width: 100%;
@@ -111,4 +187,5 @@ export default {
     left: 0;
     opacity: 0.5;
   }
+}
 </style>
