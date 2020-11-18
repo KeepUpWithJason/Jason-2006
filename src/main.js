@@ -43,6 +43,9 @@ router.beforeEach((to,from,next)=>{
 // Vue.component("el-carousel",Carousel)
 // Vue.component("el-carousel-item",CarouselItem)
 
+
+import "./utils/recursionRoutes"
+
 new Vue({
   router,
   store,
