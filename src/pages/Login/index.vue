@@ -10,7 +10,7 @@
         label-width="100px"
         class="demo-loginForm"
       >
-      <h1 class="title">千锋管理系统</h1>
+        <h1 class="title">千锋管理系统</h1>
         <el-form-item label="用户名" prop="username">
           <el-input
             type="text"
@@ -44,20 +44,20 @@
 </template>
 
 <script>
-
 //登录逻辑的实现
 
 //1.使用用户输入的username和password传递给后端
 
 //2.登录通过后，将后端返回的token存到本地
 
-//3.每次请求的时候，携带token
+//3.每次请求的时候，携带token到请求头 authorization
 
 //4.展示token校验真确的数据
 
 //5.校验不同过，跳转到登录页
 
-import { login } from "@/api"
+import { login } from "@/api";
+import { mapMutations } from "vuex"
 export default {
   data() {
     var validateUsername = (rule, value, callback) => {
@@ -87,34 +87,49 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(['SET_USERINFO']),
     submitForm(formName) {
       console.log(this.$refs["loginForm"]);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           //本地校验通过
-          console.log(this.loginForm.username,this.loginForm.password);
-          let { username,password } = this.loginForm
-          login(username,password)
-          .then(res=>{
-            console.log(res);
-            if(res.data.state){
-              //用户名密码正确
-              localStorage.setItem("jason-token",res.data.token)
-              this.$router.push("/")
-            }else{
-              //用户名或者密码错误
-              alert("用户名或密码错误")
-            }
-          })
-          .catch(err=>{
-            console.log(err);
-          })
-          alert("submit!");
+          //打开本地加载动画
+          const loading = this.$loading({
+            lock: true,
+            text: "正在登陆",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)",
+          });
+          setTimeout(() => {
+            loading.close();
+          }, 2000);
+          let { username, password } = this.loginForm;
+          login(username, password)
+            .then((res) => {
+              console.log(res);
+              //服务器响应，关闭loading动画
+              loading.close()
+              if (res.data.state) {
+                this.$message.success("登陆成功")
+                //用户名密码正确
+                localStorage.setItem("jason-token", res.data.token);
+                localStorage.setItem("jason-userInfo",JSON.stringify(res.data.userInfo))
+                //更改vuex中stateuserInfo的值
+                this.SET_USERINFO(res.data.userInfo)
+                this.$router.push("/");
+              } else {
+                //用户名或者密码错误
+                this.$message.error("用户名或密码错误");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         } else {
           console.log("error submit!!");
           return false;
         }
-      });
+      }); 
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -173,7 +188,6 @@ export default {
     position: absolute;
     right: 45px;
     top: 40px;
-
   }
   .bg_video {
     display: block;
