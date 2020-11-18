@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 
 //刷新页面会丢失用户信息
-let userInfo = localStorage.getItem("jason-userInfo") || {}
+let userInfo = localStorage.getItem("jason-userInfo") || "{}"
 userInfo = JSON.parse(userInfo)
 
 export default new Vuex.Store({

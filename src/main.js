@@ -8,6 +8,9 @@ import "@/assets/styles/el-reset.css"
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
+//引入iconfont
+import "./assets/iconFonts/iconfont.css"
+
 Vue.use(ElementUI);
 
 // Vue.config.productionTip = false;

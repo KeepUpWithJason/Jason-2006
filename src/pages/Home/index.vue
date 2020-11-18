@@ -1,13 +1,10 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-        <el-radio-button :label="false">展开</el-radio-button>
-        <el-radio-button :label="true">收起</el-radio-button>
-      </el-radio-group>
+    <el-aside width="200">
       <el-menu
         default-active="1-4-1"
         class="el-menu-vertical-demo"
+        :router="true"
         @open="handleOpen"
         @close="handleClose"
         :collapse="isCollapse"
@@ -22,32 +19,20 @@
             <el-menu-item index="1-1">选项1</el-menu-item>
             <el-menu-item index="1-2">选项2</el-menu-item>
           </el-menu-item-group>
-          <el-menu-item-group title="分组2">
-            <el-menu-item index="1-3">选项3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="1-4">
-            <span slot="title">选项4</span>
-            <el-menu-item index="1-4-1">选项1</el-menu-item>
-          </el-submenu>
         </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-menu"></i>
-          <span slot="title">导航二</span>
-        </el-menu-item>
-        <el-menu-item index="3" disabled>
-          <i class="el-icon-document"></i>
-          <span slot="title">导航三</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <i class="el-icon-setting"></i>
-          <span slot="title">导航四</span>
-        </el-menu-item>
+        <el-menu-item index="/student">学员信息</el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>
       <el-header>
         <el-row type="flex" class="row-bg" justify="space-around">
-          <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+          <el-col :span="6"
+            ><div class="grid-content bg-purple">
+              <i
+                class="iconfont icon-shouqi"
+                @click="isCollapse = !isCollapse"
+              ></i></div
+          ></el-col>
           <el-col :span="6"
             ><div class="grid-content bg-purple-light">
               千锋管理系统
@@ -59,42 +44,44 @@
                 src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
               ></el-avatar
               ><span>欢迎您:</span>
-              <b class="nickname">{{userInfo.nickname}}</b>
+              <b class="nickname">{{ userInfo.nickname }}</b>
               <span class="quit" @click="quit">退出</span>
             </div></el-col
           >
         </el-row>
       </el-header>
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view />
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
 import { getLoginLog } from "@/api";
-import { mapState } from "vuex" 
+import { mapState } from "vuex";
 export default {
   mounted() {
     getLoginLog().then((res) => {
       console.log(res);
     });
   },
-  computed:{
-    ...mapState(['userInfo'])
+  computed: {
+    ...mapState(["userInfo"]),
   },
   data() {
     return {
-      isCollapse: true,
+      isCollapse: false,
     };
   },
   methods: {
-    quit(){
+    quit() {
       //退出登录
       //1.清除token
       //2.跳转到登录页
-      localStorage.removeItem("jason-token")
-      localStorage.removeItem("jason-userInfo")
-      this.$router.push("/login")
+      localStorage.removeItem("jason-token");
+      localStorage.removeItem("jason-userInfo");
+      this.$router.push("/login");
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
@@ -107,6 +94,12 @@ export default {
 </script>
 
 <style lang="less">
+.icon-shouqi {
+  color: #fff;
+  cursor: pointer;
+  transform: translateX(-12rem);
+  font-size: 1.5rem;
+}
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
@@ -120,7 +113,7 @@ export default {
 }
 
 .el-aside {
-  background-color: #d3dce6;
+  background-color: #fff;
   color: #333;
   text-align: center;
   line-height: 200px;
@@ -159,13 +152,12 @@ body > .el-container {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
-  
 }
-.bg-purple{
+.bg-purple {
   display: flex;
   justify-content: center;
-  span{
-    margin: 2px 5px ;
+  span {
+    margin: 2px 5px;
   }
 }
 .row-bg {
@@ -176,7 +168,7 @@ body > .el-container {
 .wel {
   vertical-align: middle;
 }
-.quit{
+.quit {
   color: pink;
   cursor: pointer;
 }

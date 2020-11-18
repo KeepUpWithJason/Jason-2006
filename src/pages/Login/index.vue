@@ -22,7 +22,7 @@
           <el-input
             type="password"
             v-model="loginForm.password"
-            autocomplete="off"
+            autocomplete="off" @keydown.native.13="submitForm('loginForm')"
           ></el-input>
         </el-form-item>
         <el-form-item>
