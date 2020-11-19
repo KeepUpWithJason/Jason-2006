@@ -9,14 +9,14 @@ const routes = [{
     path: "/login",
     component: Login
   },
-  {
-    path:"*",
-    component:() => import("../pages/Page404")
-  }
+  // {
+  //   path:"*",
+  //   component:() => import("../pages/Page404")
+  // }
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
 export default router;

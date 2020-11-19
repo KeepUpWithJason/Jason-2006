@@ -5,13 +5,9 @@
  * @param {Array} allRoutes  用户的有效的完整路由配置
  * @param {Array} menuList  服务器返回的用户菜单名字
  */
-
-import allRoutes from "../router/allroutes"
-
-const recursionRoutes = (allRoutes,menuList) => {
+const recursionRoutes = (allRoutes = [],menuList = []) => {
     let userRoutes = []
     allRoutes.forEach(item => {
-        console.log(item);
         menuList.forEach(v=>{
             if(item.meta.name === v.name){
                 if(v.children && v.children.length > 0){

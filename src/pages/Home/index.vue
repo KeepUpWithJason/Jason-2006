@@ -2,25 +2,14 @@
   <el-container>
     <el-aside width="200">
       <el-menu
-        default-active="1-4-1"
+        :default-active="$route.path"
         class="el-menu-vertical-demo"
         :router="true"
         @open="handleOpen"
         @close="handleClose"
         :collapse="isCollapse"
       >
-        <el-submenu index="1">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span slot="title">导航一</span>
-          </template>
-          <el-menu-item-group>
-            <span slot="title">分组一</span>
-            <el-menu-item index="1-1">选项1</el-menu-item>
-            <el-menu-item index="1-2">选项2</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-        <el-menu-item index="/student">学员信息</el-menu-item>
+        <qf-sub-menu :sideMenu="menuList"></qf-sub-menu>
       </el-menu>
     </el-aside>
     <el-container>
@@ -50,7 +39,12 @@
           >
         </el-row>
       </el-header>
+      <!-- main内容 -->
       <el-main>
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+          <el-breadcrumb-item :to="{ path: '/Welcome' }">首页</el-breadcrumb-item>
+          <el-breadcrumb-item :to={path:crumbs.path} v-for="crumb in crumbs" :key="crumb.meta.name">{{crumb.meta.name}}</el-breadcrumb-item>
+        </el-breadcrumb>
         <router-view />
       </el-main>
     </el-container>
@@ -64,10 +58,10 @@ export default {
   mounted() {
     getLoginLog().then((res) => {
       console.log(res);
-    }); 
+    });
   },
   computed: {
-    ...mapState(["userInfo"]),
+    ...mapState(["userInfo", "menuList","crumbs"]),
   },
   data() {
     return {
@@ -82,6 +76,8 @@ export default {
       localStorage.removeItem("jason-token");
       localStorage.removeItem("jason-userInfo");
       this.$router.push("/login");
+      //刷新页面
+      window.location.reload();
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
@@ -97,8 +93,9 @@ export default {
 .icon-shouqi {
   color: #fff;
   cursor: pointer;
-  transform: translateX(-12rem);
   font-size: 1.5rem;
+  position: absolute;
+  left: 2rem;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
@@ -110,6 +107,7 @@ export default {
   text-align: center;
   line-height: 36px;
   color: #fff;
+  position: relative;
 }
 
 .el-aside {
@@ -172,4 +170,5 @@ body > .el-container {
   color: pink;
   cursor: pointer;
 }
+
 </style>

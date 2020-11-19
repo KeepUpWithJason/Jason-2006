@@ -22,7 +22,8 @@
           <el-input
             type="password"
             v-model="loginForm.password"
-            autocomplete="off" @keydown.native.13="submitForm('loginForm')"
+            autocomplete="off"
+            @keydown.native.13="submitForm('loginForm')"
           ></el-input>
         </el-form-item>
         <el-form-item>
@@ -57,7 +58,7 @@
 //5.校验不同过，跳转到登录页
 
 import { login } from "@/api";
-import { mapMutations } from "vuex"
+import { mapMutations } from "vuex";
 export default {
   data() {
     var validateUsername = (rule, value, callback) => {
@@ -87,7 +88,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(['SET_USERINFO']),
+    ...mapMutations(["SET_USERINFO"]),
     submitForm(formName) {
       console.log(this.$refs["loginForm"]);
       this.$refs[formName].validate((valid) => {
@@ -108,15 +109,18 @@ export default {
             .then((res) => {
               console.log(res);
               //服务器响应，关闭loading动画
-              loading.close()
+              loading.close();
               if (res.data.state) {
-                this.$message.success("登陆成功")
+                this.$message.success("登陆成功");
                 //用户名密码正确
                 localStorage.setItem("jason-token", res.data.token);
-                localStorage.setItem("jason-userInfo",JSON.stringify(res.data.userInfo))
+                localStorage.setItem(
+                  "jason-userInfo",
+                  JSON.stringify(res.data.userInfo)
+                );
                 //更改vuex中stateuserInfo的值
-                this.SET_USERINFO(res.data.userInfo)
-                this.$router.push("/");
+                this.SET_USERINFO(res.data.userInfo);
+                this.$router.push("/Welcome");
               } else {
                 //用户名或者密码错误
                 this.$message.error("用户名或密码错误");
@@ -129,7 +133,7 @@ export default {
           console.log("error submit!!");
           return false;
         }
-      }); 
+      });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();

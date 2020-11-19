@@ -11,7 +11,9 @@ import allRoutes from "../router/allroutes"
 import recursionRoutes from "../utils/recursionRoutes"
 //引入动态路由
 import dynamicRoutes from "../utils/dynamicRoutes"
-  
+
+//引入router
+import router from "../router"
 
 //刷新页面会丢失用户信息
 let userInfo = localStorage.getItem("jason-userInfo") || "{}"
@@ -20,16 +22,29 @@ userInfo = JSON.parse(userInfo)
 export default new Vuex.Store({
   state: {
     userInfo,
-    menuLsit:[] // 用户侧边栏菜单
+    menuList:[], // 用户侧边栏菜单
+    crumbs:[]
   },
   mutations: { 
     //更改userInfo
     SET_USERINFO(state,payload){
       state.userInfo = payload
     },
+    //获取登录的用户的菜单列表
     SET_MENULIST(state,payload){
-      state.menuLsit = payload
-    }
+      state.menuList = payload
+      //动态的将路由添加到routes中，核心方法，router.addRoutes(复合路由配置规则的数据)
+      //1.将menuList赋值给dynamicRoutes的children
+      let target = dynamicRoutes.find(item => item.path === "/")
+      target.children = [...state.menuList]
+      //2.动态添加配置到router/routes中
+      router.addRoutes(dynamicRoutes)
+    },
+
+    //设置面包屑
+     SET_CRUMBS(state,payload){
+      state.crumbs = payload  
+     }
   },
   actions: {
     //1.发送请求，获取用户菜单数据
@@ -38,9 +53,8 @@ export default new Vuex.Store({
       let userMenu = await getMenuList()
       console.log(userMenu);
       let sideMenu = recursionRoutes(allRoutes,userMenu.data.menuList)
-      // console.log(sideMenu);  
+      // console.log(sideMenu);
       commit('SET_MENULIST',sideMenu)
-      
     }
   },
   modules: {}

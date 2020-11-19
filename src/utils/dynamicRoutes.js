@@ -1,8 +1,8 @@
-import Home from "../pages/Home"
+
 const dynamicRoutes = [
     {
         path: "/",
-        component:Home,
+        component:() => import("../pages/Home"),
         children: []
     },
     {
