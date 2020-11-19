@@ -12,3 +12,10 @@
     color: #fff !important;
   }
 
+  .welcome .el-table td, .el-table th{
+    text-align: center !important;
+}
+
+.el-breadcrumb{
+    margin-bottom: 1.5rem;
+}

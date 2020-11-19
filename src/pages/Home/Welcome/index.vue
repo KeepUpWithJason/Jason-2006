@@ -1,26 +1,36 @@
 <template>
-  <div>
-    <h1>Welcome</h1>
-    <button @click="send">发送请求</button>
-    <button @click="abort">中断请求</button>
+  <div class="welcome">
+    <el-table :data="tableData" height="600" border style="width: 100%">
+      <el-table-column prop="_id" label="ID" width="250"> </el-table-column>
+      <el-table-column prop="username" label="用户名" width="180">
+      </el-table-column>
+      <el-table-column prop="lastLogin.ip" label="ip"></el-table-column>
+      <el-table-column prop="lastLogin.loginTime" label="登录时间">
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import { getLoginLog } from "@/api"
-    export default {
-        methods:{
-            send(){
-                 getLoginLog(this)
-                 .then(res=>{
-                      console.log(res);
-                 })
-            },
-            abort(){
-                if(typeof this.cancel === "function"){
-                    this.cancel()
-                }
-            }
-        }
-    }
+import { getLoginLog } from "@/api";
+
+export default {
+  data() {
+    return {
+      tableData: [],
+    };
+  },
+  methods: {
+    
+  },
+  mounted() {
+    getLoginLog().then((res) => {
+      // console.log(res.data.data);
+      this.tableData = res.data.data;
+    });
+  },
+};
 </script>
+
+<style scoped>
+</style>

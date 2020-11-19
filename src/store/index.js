@@ -23,7 +23,7 @@ export default new Vuex.Store({
   state: {
     userInfo,
     menuList:[], // 用户侧边栏菜单
-    crumbs:[]
+    crumbs:[],
   },
   mutations: { 
     //更改userInfo
@@ -44,7 +44,7 @@ export default new Vuex.Store({
     //设置面包屑
      SET_CRUMBS(state,payload){
       state.crumbs = payload  
-     }
+     },
   },
   actions: {
     //1.发送请求，获取用户菜单数据
@@ -55,7 +55,8 @@ export default new Vuex.Store({
       let sideMenu = recursionRoutes(allRoutes,userMenu.data.menuList)
       // console.log(sideMenu);
       commit('SET_MENULIST',sideMenu)
-    }
+    },
+
   },
   modules: {}
 });
