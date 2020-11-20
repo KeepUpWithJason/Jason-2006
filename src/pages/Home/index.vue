@@ -55,11 +55,6 @@
 import { getLoginLog } from "@/api";
 import { mapState } from "vuex";
 export default {
-  // mounted() {
-  //   getLoginLog().then((res) => {
-  //     console.log(res.data.data);
-  //   });
-  // },
   computed: {
     ...mapState(["userInfo", "menuList","crumbs"]),
   },
@@ -120,7 +115,6 @@ export default {
 .el-main {
   background-color: #fff;
   color: #333;
-  text-align: center;
   line-height: 60px;
 }
 
