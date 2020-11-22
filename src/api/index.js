@@ -38,3 +38,17 @@ export const add = (obj) => axios.post("/students/addstu",{
     headimgurl:obj.headimgurl
 })
 
+//搜索学员姓名
+export const search = (key) => axios.get(`/students/searchstu?key=${key}`)
+
+//修改学员信息
+export const change = (obj) => axios.post(`/students/updatestu`,obj)
+
+//上传头像
+export const uploadImg = (img) => axios({
+    url:"/students/uploadStuAvatar",
+    method:"post",
+    data:img,
+    header:{"content-type": "multipart/form-data"}
+})
+

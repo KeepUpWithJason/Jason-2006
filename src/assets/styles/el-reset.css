@@ -22,16 +22,18 @@
 .cell {
     text-align: center;
 }
-
+.el-row{
+    margin-bottom: .5rem;
+}
 .el-breadcrumb {
     margin-bottom: 1.5rem;
 }
 
 .table .el-form-item__label{
-    width: 50px !important;
+    width: 80px !important;
 }
 .table .el-form-item__content{
-    margin-left: 50px !important;
+    margin-left: 100px !important;
 }
 
 .avatar-uploader .el-upload {
