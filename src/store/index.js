@@ -24,8 +24,10 @@ export default new Vuex.Store({
     userInfo,
     menuList:[], // 用户侧边栏菜单
     crumbs:[],
+    userImg:"http://49.235.165.18/avatar/headimgurl-1606221472731.jpg",
+    nickName:"是个人柴"
   },
-  mutations: { 
+  mutations: {
     //更改userInfo
     SET_USERINFO(state,payload){
       state.userInfo = payload
@@ -53,7 +55,6 @@ export default new Vuex.Store({
       let userMenu = await getMenuList()
       console.log(userMenu);
       let sideMenu = recursionRoutes(allRoutes,userMenu.data.menuList)
-      // console.log(sideMenu);
       commit('SET_MENULIST',sideMenu)
     },
 

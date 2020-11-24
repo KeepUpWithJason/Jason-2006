@@ -1,6 +1,9 @@
 <template>
   <el-container>
     <el-aside width="200">
+      <div class="menuImg">
+        <img src="../../assets/imgs/1.jpg" alt="">
+      </div>
       <el-menu
         :default-active="$route.path"
         class="el-menu-vertical-demo"
@@ -24,16 +27,16 @@
           ></el-col>
           <el-col :span="6"
             ><div class="grid-content bg-purple-light">
-              千锋管理系统
+              人柴管理系统
             </div></el-col
           >
           <el-col :span="6">
             <div class="grid-content bg-purple">
               <el-avatar
-                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                :src="userImg"
               ></el-avatar
               ><span>欢迎您:</span>
-              <b class="nickname">{{ userInfo.nickname }}</b>
+              <b class="nickname" @click="$router.push('/Mine')">{{ nickName }}</b>
               <span class="quit" @click="quit">退出</span>
             </div></el-col
           >
@@ -56,7 +59,7 @@ import { getLoginLog } from "@/api";
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState(["userInfo", "menuList","crumbs"]),
+    ...mapState(["userInfo", "menuList","crumbs","userImg","nickName"]),
   },
   data() {
     return {
@@ -96,9 +99,12 @@ export default {
   width: 200px;
   min-height: 400px;
 }
+.el-menu{
+  border: 0;
+}
 .el-header,
 .el-footer {
-  background: linear-gradient(135deg, #4c67ff, #5635df);
+  background: linear-gradient(135deg, #4c67ff, #5635df, #4c67ff);
   text-align: center;
   line-height: 36px;
   color: #fff;
@@ -167,4 +173,16 @@ body > .el-container {
   cursor: pointer;
 }
 
+.menuImg img{
+  width: 80px;
+  height: 80px;
+}
+
+
+.nickname{
+  cursor: pointer;
+}
+.nickname:hover{
+  text-decoration: underline;
+}
 </style>

@@ -9,7 +9,7 @@
         label-width="100px"
         class="demo-loginForm"
       >
-        <h1 class="title">千锋管理系统</h1>
+        <h1 class="title">人柴管理系统</h1>
         <el-form-item label="用户名" prop="username">
           <el-input
             type="text"
@@ -46,10 +46,11 @@
     <video
       class="bg_video"
       muted
-      src="../../assets/video/bg_video.mp4"
+      src="../../assets/video/login_bg_video.mp4"
       autoplay
       loop
       preload="auto"
+      style="width: 1536px; height: auto; margin-top: 0px; margin-left: 0px;"
     ></video>
   </div>
 </template>
@@ -198,14 +199,14 @@ export default {
 .login {
   height: 100%;
   width: 100%;
-  background: url("../../assets/imgs/bg.jpg");
+  background: url("../../assets/imgs/login_bg.jpg");
   overflow: hidden;
 }
 
 .left {
   width: 50%;
   height: 100%;
-  background-image: url("../../assets/imgs/bg2.png");
+  // background-image: url("../../assets/imgs/bg2.png");
   background-repeat: no-repeat;
   background-size: 50%;
   position: absolute;
@@ -220,12 +221,11 @@ export default {
   height: 30.47619048rem;
   position: absolute;
   top: 50%;
-  left: 75%;
+  left: 50%;
   /* -webkit-transform: translate(-50%, -50%); */
   transform: translate(-50%, -50%);
   border-radius: 11px;
-  background: rgba(83, 107, 182, 0.46);
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255,255,255,.5);
   .title {
     color: #fff;
     margin-top: 100px;
