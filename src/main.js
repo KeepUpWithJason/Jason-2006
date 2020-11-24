@@ -31,7 +31,7 @@ router.beforeEach((to,from,next)=>{
   NProgress.set(.99)
   // console.log(to,from);
   //用户登录后，localstorage中有没有token
-  let token = localStorage.getItem("jason-token") || null
+  let token = localStorage.getItem("jason-token")
   if(token){
     //如果是注册页面或登录页面直接放行
     if(store.state.menuList.length == 0){

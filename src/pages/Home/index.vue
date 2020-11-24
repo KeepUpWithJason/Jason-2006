@@ -108,8 +108,10 @@ export default {
 .el-aside {
   background-color: #fff;
   color: #333;
-  text-align: center;
   line-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
 }
 
 .el-main {

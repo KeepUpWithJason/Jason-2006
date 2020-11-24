@@ -4,7 +4,6 @@
     <div class="login_page">
       <el-form
         :model="loginForm"
-        status-icon
         :rules="rules"
         ref="loginForm"
         label-width="100px"
@@ -23,9 +22,20 @@
             type="password"
             v-model="loginForm.password"
             autocomplete="off"
-            @keydown.native.13="submitForm('loginForm')"
           ></el-input>
         </el-form-item>
+        <!-- 验证码 -->
+        <el-form-item label="验证码" prop="yanzhengma">
+          <el-input
+            type="text"
+            class="yanzhengma"
+            v-model="loginForm.yanzhengma"
+            autocomplete="off"
+            @keydown.native.13="submitForm('loginForm')"
+          ></el-input>
+          <span class="yanzheng_svg" @click="refresh" v-html="verifyCode"></span>
+        </el-form-item>
+        <!-- 提交按钮 -->
         <el-form-item>
           <el-button type="primary" @click="submitForm('loginForm')"
             >提交</el-button
@@ -57,10 +67,11 @@
 
 //5.校验不同过，跳转到登录页
 
-import { login } from "@/api";
+import { login, getCode, refreshCode, verifyCode } from "@/api";
 import { mapMutations } from "vuex";
 export default {
   data() {
+    // 校验用户名
     var validateUsername = (rule, value, callback) => {
       var uPattern = /^[a-zA-Z0-9_-]{3,16}$/;
       if (!uPattern.test(value)) {
@@ -69,6 +80,8 @@ export default {
         callback();
       }
     };
+
+    //校验用户密码
     var validatePassword = (rule, value, callback) => {
       if (!value) {
         callback("请输入密码");
@@ -76,24 +89,58 @@ export default {
         callback();
       }
     };
+
+    //校验验证码
+    var validateYanzhengma = (rule, value, callback) => {
+      if (value === "" || value.length != "5") {
+        callback(new Error("请输入验证码"));
+      } else {
+        callback();
+      }
+    };
     return {
+      verifyCode: "",
       loginForm: {
         username: "",
         password: "",
+        yanzhengma: "",
       },
       rules: {
         username: [{ validator: validateUsername, trigger: "blur" }],
         password: [{ validator: validatePassword, trigger: "blur" }],
+        yanzhengma: [{ validator: validateYanzhengma, trigger: "blur" }],
       },
     };
   },
+  mounted() {
+    this.set_code();
+  },
   methods: {
+    //刷新验证码
+    refresh(){
+      this.set_code()
+    },
+    //验证码
+    set_code() {
+      getCode().then((res) => {
+        this.verifyCode = res.data.img;
+      });
+    },
     ...mapMutations(["SET_USERINFO"]),
     submitForm(formName) {
       console.log(this.$refs["loginForm"]);
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
           //本地校验通过
+          //先验证验证码是否加载正确再发送登陆请求
+          let verifyRes = await verifyCode(this.loginForm.yanzhengma);
+          // console.log(verifyRes);
+          if (!verifyRes.data.state) {
+            //验证码不正确
+            this.$message.error("验证码输入错误,请重新输入");
+            this.refresh()
+            return;
+          }
           //打开本地加载动画
           const loading = this.$loading({
             lock: true,
@@ -205,5 +252,20 @@ export default {
     left: 0;
     opacity: 0.5;
   }
+}
+
+// 验证码样式
+.yanzhengma {
+  width: 40% !important;
+  float: left !important;
+}
+
+.yanzheng_svg {
+  background: #fff;
+  display: inline-block;
+  height: 40px;
+  width: 140px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>

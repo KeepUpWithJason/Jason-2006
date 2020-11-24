@@ -52,3 +52,15 @@ export const uploadImg = (img) => axios({
     header:{"content-type": "multipart/form-data"}
 })
 
+
+
+//获取验证码
+export const getCode = () => axios.get("/users/getCaptcha")
+
+//刷新验证码
+export const refreshCode = () => axios.get("/users/refreshCaptcha")
+
+//校验验证码
+export const verifyCode = (code) => axios.get(`/users/verifyCaptcha?captcha=${code}`)
+
+

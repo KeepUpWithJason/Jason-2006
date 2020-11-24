@@ -25,7 +25,9 @@
             @click="searchStu"
           ></el-button>
         </el-input>
-        <el-button type="primary" plain @click="addStudent" class="addStu">添加学员</el-button>
+        <el-button type="primary" plain @click="addStudent" class="addStu"
+          >添加学员</el-button
+        >
       </div>
     </el-row>
 
@@ -35,14 +37,17 @@
         <!-- 头像上传部分 -->
         <el-form-item label="头像" :label-width="formLabelWidth">
           <el-upload
+            class="avatar-uploader"
             action="http://www.chst.vip/students/uploadStuAvatar"
-            list-type="picture"
-            :on-remove="handleRemove"
-            name="headimgurl"
+            :show-file-list="false"
             :on-success="imgSuccess"
             :limit="1"
+            :multiple="false"
+            name="headimgurl"
+            :on-remove="imgRemove"
           >
-            <i class="el-icon-plus"></i>
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
         <!-- 文字输入部分 -->
@@ -113,18 +118,40 @@
           <el-button
             type="primary"
             size="mini"
+            icon="el-icon-view"
+            @click="look(scope.$index, scope.row)"
+            >查看</el-button
+          >
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-edit"
             @click="edit(scope.$index, scope.row)"
             >编辑</el-button
           >
           <el-button
             size="mini"
             type="danger"
+            icon="el-icon-delete"
             @click="open(scope.$index, scope.row)"
             >删除</el-button
           >
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页器 -->
+    <div class="pagination">
+      <el-pagination
+        background
+        hide-on-single-page
+        layout="prev, pager, next"
+        @current-change="pageChange"
+        :total="total"
+        :page-size="dataCount"
+        :page-count="pages"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -142,8 +169,10 @@ export default {
   data() {
     return {
       tableData: [],
+      totalData:[],
       dialogTableVisible: false,
       dialogFormVisible: false,
+      imageUrl: "",
       input1: "",
       input2: "",
       input3: "",
@@ -154,6 +183,11 @@ export default {
       row: {},
       resImg: {},
       formLabelWidth: "200px",
+
+      total:0,
+      pages:0,
+      dataCount:5,
+      currentPage:1
     };
   },
   watch: {
@@ -164,14 +198,20 @@ export default {
     },
   },
   methods: {
-    //修改
-    edit(index, row) {
-      this.form = row;
-      this.row = row;
-      console.log(row);
-      this.form.headimgurl = row.headimgurl;
-      console.log(this.form.headimgurl);
-      this.dialogFormVisible = true;
+    //切换分页
+    pageChange(p){
+      console.log(p);
+      // 根据页码展示该页数据
+      console.log(this.totalData.slice((p-1)*5,p * 5));
+      this.tableData =  this.totalData.slice((p-1)*5,p * 5)
+      // 记录当前页
+      this.currentPage = p
+    },
+    //查看学员信息
+    look(index, row) {
+      // console.log(row);
+      console.log("row", row);
+      this.$router.push({ name: "studentProfile", params: { row } });
     },
     //搜索学员信息
     searchStu() {
@@ -184,30 +224,45 @@ export default {
       // 上传成功 给formheadimgurl的属性
       console.log(res);
       this.resImg = res.headimgurl;
+      this.imageUrl = res.headimgurl;
+      console.log("上传成功", this.imageUrl);
     },
     // 图片移动
-    handleRemove(file, fileList) {
+    imgRemove(file, fileList) {
       console.log(file, fileList);
     },
     //点击添加弹出
     addStudent() {
+      this.form = {};
       this.row = {};
       this.form.headimgurl = "";
+      this.imageUrl = "";
       this.dialogFormVisible = true;
     },
-    //确认按钮添加
+
+    //修改
+    edit(index, row) {
+      this.form = row;
+      this.row = row;
+      this.form.headimgurl = row.headimgurl;
+      this.imageUrl = row.headimgurl;
+      this.dialogFormVisible = true;
+    },
+
+    //确认按钮添加/修改
     confirm() {
       if (JSON.stringify(this.row) !== "{}") {
         //对话框中有数据-----修改
         this.form.headimgurl = this.resImg;
+        console.log("发送修改的数据", this.form);
         change(this.form).then((res) => {
-          console.log("修改", res);
+          console.log("修改成功返回的数据", res);
           this.$message({
             type: "success",
             message: "更改成功!",
           });
-          this.form = {};
           this.dialogFormVisible = false;
+          this.form = {};
         });
       } else {
         this.form.headimgurl = this.resImg;
@@ -219,7 +274,7 @@ export default {
               type: "success",
               message: "添加成功!",
             });
-            this.tableData = res.data.data;
+            this.tableData = res.data.data.slice(0,5);
             console.log("添加", res);
             this.dialogFormVisible = false;
             this.form = {};
@@ -237,14 +292,16 @@ export default {
         center: true,
       })
         .then(() => {
-          console.log(row.sId);
+          console.log("要删除的该项",row);
           deleteStudents(row.sId).then((res) => {
             this.$message({
               type: "success",
               message: "删除成功!",
             });
             getStudents().then((res) => {
-              this.tableData = res.data.data;
+              console.log("获取当前页码",this.currentPage);
+              this.tableData = res.data.data.slice((this.currentPage - 1) * 5,this.currentPage * 5);
+              console.log("获取当前页码所展示的数据",this.tableData);
             });
           });
         })
@@ -257,11 +314,19 @@ export default {
     },
   },
   computed: {},
-  created() {
+  mounted(){
     getStudents().then((res) => {
-      this.tableData = res.data.data;
+      console.log(res.data.data);
+      // 总条目数
+      this.total = res.data.data.length
+      // 页码数----每页五条数据
+      this.pages = (res.data.data.length) / this.dataCount
+      // 让每页显示五条数据
+      this.totalData =  res.data.data
+      this.tableData = res.data.data.slice(0,5)
+      // this.tableData = res.data.data;
     });
-  },
+  }
 };
 </script>
 
@@ -287,7 +352,12 @@ export default {
   display: block;
 }
 
-.addStu{
-    margin-left: 20px;
+.addStu {
+  margin-left: 20px;
+}
+
+.pagination{
+  display: flex;
+  justify-content: center;
 }
 </style>

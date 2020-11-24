@@ -43,3 +43,7 @@
     position: relative;
     overflow: hidden;
   }
+
+ .login .el-form-item__content{
+    height: 40px !important;
+  }
